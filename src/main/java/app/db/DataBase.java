@@ -5,24 +5,24 @@ import java.sql.*;
 
 public class DataBase {
     private String className;
-    private String URL;
-    private String USER;
-    private String PASSWORD;
+    private String url;
+    private String user;
+    private String password;
     private Connection connection;
     private Statement statement;
 
 
-    public DataBase(String className, String URL, String USER, String PASSWORD) {
+    public DataBase(String className, String url, String user, String password) {
         this.className = className;
-        this.URL = URL;
-        this.USER = USER;
-        this.PASSWORD = PASSWORD;
+        this.url = url;
+        this.user = user;
+        this.password = password;
     }
 
     public void connect() {
         try {
             Class.forName(className);
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection successful");
             statement = connection.createStatement();
         } catch (SQLException | ClassNotFoundException e) {

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RoomService {
-    RoomRepository roomRepository;
+    private RoomRepository roomRepository;
 
     public RoomService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;

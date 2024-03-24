@@ -39,18 +39,18 @@ public class BookingServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //Валидный POST-запрос: /booking?client_id=n&room_id=m добавить новое бронирование
+        //Валидный POST-запрос: /booking?clientId=n&roomId=m добавить новое бронирование
         PrintWriter writer = response.getWriter();
 
-        String client_idString = request.getParameter("client_id");
-        String room_idString = request.getParameter("room_id");
+        String clientIdString = request.getParameter("clientId");
+        String roomIdString = request.getParameter("roomId");
 
         Optional<Booking> newBooking = Optional.empty();
 
         try {
-            long client_id = Long.parseLong(client_idString);
-            long room_id = Long.parseLong(room_idString);
-            newBooking = bookingService.add(client_id, room_id);
+            long clientId = Long.parseLong(clientIdString);
+            long roomId = Long.parseLong(roomIdString);
+            newBooking = bookingService.add(clientId, roomId);
         } catch (NumberFormatException e) {
             writer.write("Your request is invalid");
             return;
@@ -65,24 +65,22 @@ public class BookingServlet extends HttpServlet {
     }
 
 
-
-
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //Валидные DELETE-запросы : /booking?client_id=n удаляет все бронирования клиента
-        //Валидные DELETE-запросы : /booking?client_id=n&number=m учитывает номер комнаты
+        //Валидные DELETE-запросы : /booking?clientId=n удаляет все бронирования клиента
+        //Валидные DELETE-запросы : /booking?clientId=n&number=m учитывает номер комнаты
 
         PrintWriter writer = response.getWriter();
-        String client_idString = request.getParameter("client_id");
+        String clientIdString = request.getParameter("clientId");
         String numberString = request.getParameter("number");
         List<Booking> deletedList;
         try {
-            long client_id = Long.parseLong(client_idString);
-            if(numberString == null) {
-                deletedList = bookingService.deleteAllByClientId(client_id);
+            long clientId = Long.parseLong(clientIdString);
+            if (numberString == null) {
+                deletedList = bookingService.deleteAllByClientId(clientId);
             } else {
                 int number = Integer.parseInt(numberString);
-                deletedList = bookingService.deleteAllByClientIdAndNumber(client_id, number);
+                deletedList = bookingService.deleteAllByClientIdAndNumber(clientId, number);
             }
         } catch (NumberFormatException e) {
             writer.write("Your request is invalid");

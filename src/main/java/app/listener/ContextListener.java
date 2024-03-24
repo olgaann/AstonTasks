@@ -13,7 +13,7 @@ import java.util.Properties;
 
 @WebListener
 public class ContextListener implements ServletContextListener {
-    DataBase dataBase;
+    private DataBase dataBase;
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         Properties properties = new Properties();
@@ -36,7 +36,6 @@ public class ContextListener implements ServletContextListener {
         servletContext.setAttribute("dataBase", dataBase);
         createTablesIfNotExist(servletContext);
     }
-
 
     private void createTablesIfNotExist(ServletContext servletContext) {
         try (InputStream inputStream = servletContext.getResourceAsStream("WEB-INF/resources/create-tables.sql")) {

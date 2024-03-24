@@ -38,14 +38,11 @@ public class ClientRepository {
         return clients;
     }
 
-
     public Client getById(long id) {
         Client client = null;
         try {
             dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement(
-                    "SELECT * FROM clients WHERE id = ?"
-            );
+            PreparedStatement preparedStatement = dataBase.getPreparedStatement("SELECT * FROM clients WHERE id = ?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -65,9 +62,7 @@ public class ClientRepository {
         Client client = null;
         try {
             dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement(
-                    "SELECT * FROM clients WHERE name = ?"
-            );
+            PreparedStatement preparedStatement = dataBase.getPreparedStatement("SELECT * FROM clients WHERE name = ?");
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
 

@@ -27,17 +27,17 @@ DELETE http://localhost:8080/client?id=4
 GET  http://localhost:8080/booking
 
 добавляем бронирования
-POST   http://localhost:8080/booking?client_id=1&room_id=2
-POST   http://localhost:8080/booking?client_id=1&room_id=3
-POST   http://localhost:8080/booking?client_id=1&room_id=4
-POST   http://localhost:8080/booking?client_id=3&room_id=1
-POST   http://localhost:8080/booking?client_id=3&room_id=2
+POST   http://localhost:8080/booking?clientId=1&roomId=2
+POST   http://localhost:8080/booking?clientId=1&roomId=3
+POST   http://localhost:8080/booking?clientId=1&roomId=4
+POST   http://localhost:8080/booking?clientId=3&roomId=1
+POST   http://localhost:8080/booking?clientId=3&roomId=2
 
 смотрим список бронирований
 GET  http://localhost:8080/booking
 
 удаляем все бронирования клиента разом
-DELETE http://localhost:8080/booking?client_id=1
+DELETE http://localhost:8080/booking?clientId=1
 
 удаляем конкретное бронирование клиента
-DELETE http://localhost:8080/booking?client_id=3&number=201
+DELETE http://localhost:8080/booking?clientId=3&number=201

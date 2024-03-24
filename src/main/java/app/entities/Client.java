@@ -9,7 +9,6 @@ public class Client {
     private String phone;
     private List<Room> rooms;
 
-
     public Client(String name, String phone) {
         this.name = name;
         this.phone = phone;

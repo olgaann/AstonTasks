@@ -39,23 +39,24 @@ public class RoomRepository {
         return roomList;
     }
 
-
-    public Optional<Room> add(int number) throws SQLException {
+    public Optional<Room> add(int number) {
         try {
             dataBase.connect();
             String sql = "INSERT INTO rooms(number) VALUES (?) RETURNING id, number";
 
-            try (PreparedStatement statement = dataBase.getPreparedStatement(sql)) {
-                statement.setInt(1, number);
-                ResultSet resultSet = statement.executeQuery();
+            PreparedStatement statement = dataBase.getPreparedStatement(sql);
+            statement.setInt(1, number);
+            ResultSet resultSet = statement.executeQuery();
 
-                if (resultSet.next()) {
-                    Room newRoom = new Room();
-                    newRoom.setId(resultSet.getLong("id"));
-                    newRoom.setNumber(resultSet.getInt("number"));
-                    return Optional.of(newRoom);
-                }
+            if (resultSet.next()) {
+                Room newRoom = new Room();
+                newRoom.setId(resultSet.getLong("id"));
+                newRoom.setNumber(resultSet.getInt("number"));
+                return Optional.of(newRoom);
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         } finally {
             dataBase.disconnect();
         }

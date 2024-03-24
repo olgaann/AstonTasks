@@ -25,17 +25,14 @@ public class BookingRepository {
                 "FROM bookings b\n" +
                 "JOIN clients c ON b.client_id = c.id \n" +
                 "JOIN rooms r ON b.room_id = r.id;";
-
         try {
             dataBase.connect();
             Statement statement = dataBase.getStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-
-
             while (resultSet.next()) {
                 Booking booking = new Booking();
-                booking.setClient_id(resultSet.getLong("id"));
-                booking.setClient_name(resultSet.getString("name"));
+                booking.setClientId(resultSet.getLong("id"));
+                booking.setClientName(resultSet.getString("name"));
                 booking.setNumber(resultSet.getInt("number"));
                 bookingList.add(booking);
             }
@@ -44,38 +41,32 @@ public class BookingRepository {
         } finally {
             dataBase.disconnect();
         }
-
         return bookingList;
     }
 
-    public List<Booking> deleteAllByClientId(long client_id) {
+    public List<Booking> deleteAllByClientId(long clientId) {
         List<Booking> bookingList = new ArrayList<>();
         String selectSql = "SELECT c.id, c.name, r.number \n" +
                 "FROM bookings b\n" +
                 "JOIN clients c ON b.client_id = c.id \n" +
                 "JOIN rooms r ON b.room_id = r.id\n" +
                 "WHERE c.id = ?;";
-
         String deleteSql = "DELETE FROM bookings WHERE client_id = ?";
-
         try {
             dataBase.connect();
             PreparedStatement selectStatement = dataBase.getPreparedStatement(selectSql);
-            selectStatement.setLong(1, client_id);
+            selectStatement.setLong(1, clientId);
             ResultSet resultSet = selectStatement.executeQuery();
-
             while (resultSet.next()) {
                 Booking booking = new Booking();
-                booking.setClient_id(resultSet.getLong("id"));
-                booking.setClient_name(resultSet.getString("name"));
+                booking.setClientId(resultSet.getLong("id"));
+                booking.setClientName(resultSet.getString("name"));
                 booking.setNumber(resultSet.getInt("number"));
                 bookingList.add(booking);
             }
-
             PreparedStatement deleteStatement = dataBase.getPreparedStatement(deleteSql);
-            deleteStatement.setLong(1, client_id);
+            deleteStatement.setLong(1, clientId);
             int rowsDeleted = deleteStatement.executeUpdate();
-
             if (rowsDeleted == bookingList.size()) {
                 return bookingList;
             }
@@ -87,7 +78,7 @@ public class BookingRepository {
         return new ArrayList<>();
     }
 
-    public List<Booking> deleteAllByClientIdAndNumber(long client_id, int number) {
+    public List<Booking> deleteAllByClientIdAndNumber(long clientId, int number) {
         List<Booking> bookingList = new ArrayList<>();
         String selectSql = "SELECT c.id, r.id AS room_id, c.name, r.number \n" +
                 "FROM bookings b\n" +
@@ -96,28 +87,25 @@ public class BookingRepository {
                 "WHERE c.id = ? AND r.number = ?;";
 
         String deleteSql = "DELETE FROM bookings WHERE client_id = ? AND room_id = ?;";
-
         try {
             dataBase.connect();
             PreparedStatement selectStatement = dataBase.getPreparedStatement(selectSql);
-            selectStatement.setLong(1, client_id);
+            selectStatement.setLong(1, clientId);
             selectStatement.setLong(2, number);
             ResultSet resultSet = selectStatement.executeQuery();
-            long room_id = 0;
+            long roomId = 0;
             while (resultSet.next()) {
-                room_id = resultSet.getLong("room_id");
+                roomId = resultSet.getLong("room_id");
                 Booking booking = new Booking();
-                booking.setClient_id(resultSet.getLong("id"));
-                booking.setClient_name(resultSet.getString("name"));
+                booking.setClientId(resultSet.getLong("id"));
+                booking.setClientName(resultSet.getString("name"));
                 booking.setNumber(resultSet.getInt("number"));
                 bookingList.add(booking);
             }
-
             PreparedStatement deleteStatement = dataBase.getPreparedStatement(deleteSql);
-            deleteStatement.setLong(1, client_id);
-            deleteStatement.setLong(2, room_id);
+            deleteStatement.setLong(1, clientId);
+            deleteStatement.setLong(2, roomId);
             int rowsDeleted = deleteStatement.executeUpdate();
-
             if (rowsDeleted == bookingList.size()) {
                 return bookingList;
             }
@@ -148,7 +136,6 @@ public class BookingRepository {
             preparedStatement.setLong(1, clientId);
             preparedStatement.setLong(2, roomId);
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 Booking newBooking = new Booking(resultSet.getLong("client_id"), clientName.get(), number.get());
                 return Optional.of(newBooking);
@@ -158,14 +145,12 @@ public class BookingRepository {
         } finally {
             dataBase.disconnect();
         }
-
         return Optional.empty();
     }
 
 
     public Optional<String> getClientNameById(long clientId) throws SQLException {
         String sql = "SELECT name FROM clients WHERE id = ?";
-
         try {
             dataBase.connect();
             PreparedStatement preparedStatement = dataBase.getPreparedStatement(sql);
@@ -180,30 +165,26 @@ public class BookingRepository {
         } finally {
             dataBase.disconnect();
         }
-
         return Optional.empty();
     }
 
     private Optional<Integer> getRoomNumber(long roomId) throws SQLException {
         String sql = "SELECT number FROM rooms WHERE id = ?";
-
+        PreparedStatement preparedStatement;
         try {
             dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement(sql);
+            preparedStatement = dataBase.getPreparedStatement(sql);
             preparedStatement.setLong(1, roomId);
-
-
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 int roomNumber = resultSet.getInt("number");
                 return Optional.of(roomNumber);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            dataBase.connect();
         }
-
         return Optional.empty();
     }
 }

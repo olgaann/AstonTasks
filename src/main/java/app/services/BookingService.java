@@ -16,7 +16,7 @@ public class BookingService {
 
     public String bookingListToPrintView(List<Booking> bookingList) {
         return bookingList.stream()
-                .map(booking -> String.format("%s %s %s", booking.getClient_id(), booking.getClient_name(), booking.getNumber()))
+                .map(booking -> String.format("%s %s %s", booking.getClientId(), booking.getClientName(), booking.getNumber()))
                 .collect(Collectors.joining("\n"));
 
     }
@@ -25,12 +25,12 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public List<Booking> deleteAllByClientId(long client_id) {
-        return bookingRepository.deleteAllByClientId(client_id);
+    public List<Booking> deleteAllByClientId(long clientId) {
+        return bookingRepository.deleteAllByClientId(clientId);
     }
 
-    public List<Booking> deleteAllByClientIdAndNumber(long client_id, int number) {
-        return bookingRepository.deleteAllByClientIdAndNumber(client_id, number);
+    public List<Booking> deleteAllByClientIdAndNumber(long clientId, int number) {
+        return bookingRepository.deleteAllByClientIdAndNumber(clientId, number);
     }
 
     public Optional<Booking> add(long clientId, long roomId) {

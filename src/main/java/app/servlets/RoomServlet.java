@@ -23,7 +23,7 @@ public class RoomServlet extends HttpServlet {
     @Override
     public void init() {
         DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
-        RoomRepository roomRepository= new RoomRepository(dataBase);
+        RoomRepository roomRepository = new RoomRepository(dataBase);
         roomService = new RoomService(roomRepository);
     }
 

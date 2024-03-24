@@ -1,33 +1,33 @@
 package app.entities;
 
 public class Booking {
-    private long client_id;
-    private String client_name;
+    private long clientId;
+    private String clientName;
     private int number;
 
-    public Booking(long client_id, String client_name, int number) {
-        this.client_id = client_id;
-        this.client_name = client_name;
+    public Booking(long clientId, String clientName, int number) {
+        this.clientId = clientId;
+        this.clientName = clientName;
         this.number = number;
     }
 
     public Booking() {
     }
 
-    public long getClient_id() {
-        return client_id;
+    public long getClientId() {
+        return clientId;
     }
 
-    public void setClient_id(long client_id) {
-        this.client_id = client_id;
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
     }
 
-    public String getClient_name() {
-        return client_name;
+    public String getClientName() {
+        return clientName;
     }
 
-    public void setClient_name(String client_name) {
-        this.client_name = client_name;
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public int getNumber() {
@@ -41,8 +41,8 @@ public class Booking {
     @Override
     public String toString() {
         return "Booking{" +
-                "client_id=" + client_id +
-                ", client_name='" + client_name + '\'' +
+                "clientId=" + clientId +
+                ", clientName='" + clientName + '\'' +
                 ", number=" + number +
                 '}';
     }
