@@ -17,6 +17,8 @@
         <property name="show_sql">true</property>
 
         <property name="current_session_context_class">thread</property>
+
+        <mapping class="app.entities.Client" />
 <!--        <property name="hibernate.hbm2ddl.auto">create</property>-->
 <!--        <property name="hibernate.hbm2ddl.auto"><![CDATA[none]]></property>-->
     </session-factory>

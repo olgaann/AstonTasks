@@ -1,6 +1,8 @@
 package app.listener;
 
+import app.HibernateUtil;
 import app.db.DataBase;
+import org.hibernate.SessionFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -34,6 +36,8 @@ public class ContextListener implements ServletContextListener {
             e.printStackTrace();
         }
         servletContext.setAttribute("dataBase", dataBase);
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        servletContext.setAttribute("sessionFactory", sessionFactory);
         createTablesIfNotExist(servletContext);
     }
 

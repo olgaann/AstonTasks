@@ -4,6 +4,7 @@ import app.db.DataBase;
 import app.entities.Client;
 import app.repositories.ClientRepository;
 import app.services.ClientService;
+import org.hibernate.SessionFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 public class ClientServlet extends HttpServlet {
     private ClientService clientService;
@@ -19,13 +22,14 @@ public class ClientServlet extends HttpServlet {
     @Override
     public void init() {
         DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
-
-        ClientRepository clientRepository = new ClientRepository(dataBase);
+        SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
+        ClientRepository clientRepository = new ClientRepository(dataBase, sessionFactory);
         clientService = new ClientService(clientRepository);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        //Валидные GET-запросы : /client   /client/?id=n  (+ выводит список номеров, забронированных клиентом)  /client/?name=clientName
+        //Валидные GET-запросы : /client   TODO/client/?id=n  (+ выводит список номеров, забронированных клиентом)
+        // /client/?name=clientName
 
         String requestURI = request.getRequestURI();
         String queryString = request.getQueryString();
@@ -51,11 +55,15 @@ public class ClientServlet extends HttpServlet {
         try {
             if(queryString.matches( "^id=\\d+$")) {
                 long id = Long.parseLong(queryString.substring(queryString.indexOf("=") + 1));
-                return clientService.getById(id).toString() + "\n" + clientService.getRoomsNumbersByClientId(id).toString();
+                Optional<Client> client = clientService.getById(id);
+                if (client.isEmpty()) return "No clients with that id";
+                return client.get().toString() + "\n" + clientService.getRoomsNumbersByClientId(id).toString();
             }
             if(queryString.matches("^name=[a-zA-Z]+$")) {
                 String name = queryString.substring(queryString.indexOf("=") + 1);
-                return clientService.getByName(name).toString();
+                List<Client> clients = clientService.getByName(name);
+                if(clients.isEmpty()) return "No clients with that id";
+                return clients.toString();
             }
             return "Your request is invalid";
         } catch (NullPointerException e) {
@@ -72,17 +80,13 @@ public class ClientServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
-        Client newClient = null;
-        try {
-            newClient = clientService.add(name, phone);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (name == null) {
+            writer.write("Your request is invalid");
+            return;
         }
-        if (newClient == null) {
-            writer.write("Client has not added(");
-        } else {
-            writer.write("Client added: " + newClient.toString());
-        }
+        Optional<Client> newClient = clientService.add(name, phone);
+        if (newClient.isEmpty()) writer.write("Client has not added");
+        writer.write("Client added: " + newClient.get().toString());
     }
 
     @Override
@@ -93,8 +97,6 @@ public class ClientServlet extends HttpServlet {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
 
-        System.out.println(name);
-        System.out.println(phone);
         if (idString == null) {
             writer.write("Your request is invalid");
             return;
@@ -104,7 +106,7 @@ public class ClientServlet extends HttpServlet {
             return;
         }
 
-        Client updatedClient = null;
+        Optional<Client> updatedClient;
         try {
             long id = Long.parseLong(idString);
             updatedClient = clientService.updateById(id, name, phone);
@@ -114,11 +116,12 @@ public class ClientServlet extends HttpServlet {
             return;
         }
 
-        if (updatedClient == null) {
+        if (updatedClient.isEmpty())  {
             writer.write("Client has not updated(");
-        } else {
-            writer.write("Client updated: " + updatedClient.toString());
+            return;
         }
+        writer.write("Client updated: " + updatedClient.get().toString());
+
     }
 
     @Override
@@ -127,21 +130,20 @@ public class ClientServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         String idString = request.getParameter("id");
 
-
-        Client deletedClient = null;
+        Optional<Client> deletedClient;
         try {
             long id = Long.parseLong(idString);
             deletedClient = clientService.deleteById(id);
-
         } catch (NumberFormatException e) {
             writer.write("Your request is invalid");
             return;
         }
 
-        if (deletedClient == null) {
+        if (deletedClient.isEmpty()) {
             writer.write("Client has not deleted(");
-        } else {
-            writer.write("Client deleted: " + deletedClient.toString());
+            return;
         }
+        writer.write("Client deleted: " + deletedClient.get().toString());
+
     }
 }

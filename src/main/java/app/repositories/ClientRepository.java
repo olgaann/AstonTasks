@@ -2,6 +2,11 @@ package app.repositories;
 
 import app.db.DataBase;
 import app.entities.Client;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,73 +14,91 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientRepository {
     private DataBase dataBase;
+    private SessionFactory sessionFactory;
 
-    public ClientRepository(DataBase dataBase) {
+    public ClientRepository(DataBase dataBase, SessionFactory sessionFactory) {
         this.dataBase = dataBase;
+        this.sessionFactory = sessionFactory;
     }
 
     public List<Client> getAllClients() {
-        List<Client> clients = new ArrayList<>();
+        Session session = null;
+        Transaction transaction = null;
 
         try {
-            dataBase.connect();
-            Statement statement = dataBase.getStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
+            session = sessionFactory.openSession();
+            List<Client> clients;
 
-            while (resultSet.next()) {
-                Client client = new Client(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("phone"));
-                clients.add(client);
-            }
-        } catch (SQLException e) {
+            transaction = session.beginTransaction();
+            String hql = "FROM Client";
+            Query<Client> query = session.createQuery(hql, Client.class);
+            clients = query.list();
+
+            transaction.commit();
+            return clients;
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return new ArrayList<>();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-
-        return clients;
     }
 
-    public Client getById(long id) {
-        Client client = null;
+    public Optional<Client> getById(long id) {
+        Session session = null;
+        Transaction transaction = null;
+
         try {
-            dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement("SELECT * FROM clients WHERE id = ?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            Client client = session.get(Client.class, id);
+            transaction.commit();
 
-            if (resultSet.next()) {
-                client = new Client(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("phone"));
-            }
-        } catch (SQLException e) {
+            return Optional.ofNullable(client);
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return Optional.empty();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-
-        return client;
     }
 
-    public Client getByName(String name) {
-        Client client = null;
+    public List<Client> getByName(String name) {
+        Session session = null;
+        Transaction transaction = null;
+
         try {
-            dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement("SELECT * FROM clients WHERE name = ?");
-            preparedStatement.setString(1, name);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Client> clients;
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
 
-            if (resultSet.next()) {
-                client = new Client(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("phone"));
-            }
-        } catch (SQLException e) {
+            String hql = "FROM Client c WHERE c.name = :name";
+            Query<Client> query = session.createQuery(hql, Client.class);
+            query.setParameter("name", name);
+            clients = query.list();
+
+            transaction.commit();
+
+            return clients;
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return new ArrayList<>();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-
-        return client;
     }
 
     public List<Integer> getRoomsNumbersByClientId(long id) {
@@ -102,108 +125,90 @@ public class ClientRepository {
         return numbers;
     }
 
-    public Client add(String name, String phone) throws SQLException {
-        Client newClient = new Client(name, phone);
-        String sql = "INSERT INTO clients (name, phone) VALUES (?, ?);";
+    public Optional<Client> add(String name, String phone) {
+        Session session = null;
+        Transaction transaction = null;
 
         try {
-            dataBase.connect();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, phone);
-            int rowsAffected = preparedStatement.executeUpdate();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
 
-            if (rowsAffected == 1) {
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            Client newClient = new Client();
+            newClient.setName(name);
+            newClient.setPhone(phone);
+            session.save(newClient);
+            transaction.commit();
 
-                if (generatedKeys.next()) {
-                    newClient.setId(generatedKeys.getLong(1));
-                }
-            }
-            return newClient;
-        } catch (SQLException e) {
+            return Optional.of(newClient);
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return Optional.empty();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-        return null;
     }
 
-    public Client updateById(long id, String name, String phone) {
-        Client updatedClient = new Client();
-        try {
-            dataBase.connect();
-            StringBuilder sqlBuilder = new StringBuilder("UPDATE clients SET ");
-            List<String> parameters = new ArrayList<>();
-            if (name != null) {
-                parameters.add("name = ?");
-            }
-            if (phone != null) {
-                parameters.add("phone = ?");
-            }
-            sqlBuilder.append(String.join(", ", parameters));
-            sqlBuilder.append(" WHERE id = ?");
-            String sql = sqlBuilder.toString();
-            PreparedStatement preparedStatement = dataBase.getPreparedStatement(sql);
-            int parameterIndex = 1;
-            if (name != null) {
-                preparedStatement.setString(parameterIndex++, name);
-            }
-            if (phone != null) {
-                preparedStatement.setString(parameterIndex++, phone);
-            }
-            preparedStatement.setLong(parameterIndex, id);
-            int rowsUpdated = preparedStatement.executeUpdate();
-            if (rowsUpdated == 1) {
-                PreparedStatement selectStatement = dataBase.getPreparedStatement("SELECT * FROM clients WHERE id = ?");
-                selectStatement.setLong(1, id);
-                ResultSet resultSet = selectStatement.executeQuery();
-                if (resultSet.next()) {
-                    updatedClient.setId(resultSet.getLong("id"));
-                    updatedClient.setName(resultSet.getString("name"));
-                    updatedClient.setPhone(resultSet.getString("phone"));
-                }
-                return updatedClient;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            dataBase.disconnect();
-        }
-        return null;
-    }
-
-    public Client deleteById( long id) {
-        Client deletedClient = null;
-        String selectSql = "SELECT id, name, phone FROM clients WHERE id = ?";
-        String deleteSql = "DELETE FROM clients WHERE id = ?";
+    public Optional<Client> updateById(long id, String name, String phone) {
+        Session session = null;
+        Transaction transaction = null;
 
         try {
-            dataBase.connect();
-            PreparedStatement selectStatement = dataBase.getPreparedStatement(selectSql);
-            selectStatement.setLong(1, id);
-            ResultSet resultSet = selectStatement.executeQuery();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
 
-            if (resultSet.next()) {
-                deletedClient = new Client();
-                deletedClient.setId(resultSet.getLong("id"));
-                deletedClient.setName(resultSet.getString("name"));
-                deletedClient.setPhone(resultSet.getString("phone"));
+            Client client = session.get(Client.class, id);
+
+            if (client != null) {
+                client.setName(name);
+                client.setPhone(phone);
+
+                session.update(client);
+                transaction.commit();
+
+                return Optional.of(client);
+            } else {
+                return Optional.empty();
             }
-
-            PreparedStatement deleteStatement = dataBase.getPreparedStatement(deleteSql);
-            deleteStatement.setLong(1, id);
-            int rowsDeleted = deleteStatement.executeUpdate();
-
-            if (rowsDeleted == 0) {
-                deletedClient = null;
-            }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return Optional.empty();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-        return deletedClient;
     }
+
+    public Optional<Client> deleteById(long id) {
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            Client client = session.get(Client.class, id);
+
+            if (client != null) {
+                session.delete(client);
+                transaction.commit();
+                return Optional.of(client);
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return Optional.empty();
+        } finally {
+            session.close();
+        }
+    }
+
 }

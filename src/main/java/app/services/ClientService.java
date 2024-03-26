@@ -3,8 +3,8 @@ package app.services;
 import app.entities.Client;
 import app.repositories.ClientRepository;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientService {
     private ClientRepository clientRepository;
@@ -17,11 +17,11 @@ public class ClientService {
         return clientRepository.getAllClients();
     }
 
-    public Client getById(long id) {
+    public Optional<Client> getById(long id) {
         return clientRepository.getById(id);
     }
 
-    public Client getByName(String name) {
+    public List<Client> getByName(String name) {
         return clientRepository.getByName(name);
     }
 
@@ -29,15 +29,15 @@ public class ClientService {
         return clientRepository.getRoomsNumbersByClientId(id);
     }
 
-    public Client add(String name, String phone) throws SQLException {
+    public Optional<Client> add(String name, String phone) {
         return clientRepository.add(name, phone);
     }
 
-    public Client updateById(long id, String name, String phone) {
+    public Optional<Client> updateById(long id, String name, String phone) {
         return clientRepository.updateById(id, name, phone);
     }
 
-    public Client deleteById(long id) {
+    public Optional<Client> deleteById(long id) {
         return clientRepository.deleteById(id);
     }
 }
