@@ -15,8 +15,10 @@ public class Main {
 
         session = factory.getCurrentSession();
         session.beginTransaction();
-        Client client = session.load(Client.class, 2);
+        Client client = session.load(Client.class, 3);
+
         System.out.println(client);
+        System.out.println(client.getRooms().toString());
         session.getTransaction().commit();
 
     }

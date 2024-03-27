@@ -57,7 +57,7 @@ public class ClientServlet extends HttpServlet {
                 long id = Long.parseLong(queryString.substring(queryString.indexOf("=") + 1));
                 Optional<Client> client = clientService.getById(id);
                 if (client.isEmpty()) return "No clients with that id";
-                return client.get().toString() + "\n" + clientService.getRoomsNumbersByClientId(id).toString();
+                return client.get().toString() + "\n" + client.get().getRooms().toString();
             }
             if(queryString.matches("^name=[a-zA-Z]+$")) {
                 String name = queryString.substring(queryString.indexOf("=") + 1);

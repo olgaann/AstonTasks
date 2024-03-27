@@ -17,13 +17,17 @@ public class Client {
 
     @Column(name = "phone")
     private String phone;
-
-//    private List<Room> rooms;
+    @ManyToMany
+    @JoinTable(
+            name = "bookings",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private List<Room> rooms;
 
     public Client(String name, String phone) {
         this.name = name;
         this.phone = phone;
-
     }
 
     public Client() {
@@ -59,6 +63,14 @@ public class Client {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
     }
 
     @Override
