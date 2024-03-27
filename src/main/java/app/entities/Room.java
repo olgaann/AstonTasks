@@ -1,7 +1,16 @@
 package app.entities;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "rooms")
 public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
+    @Column(name = "number")
     private int number;
 
     public Room(int number) {

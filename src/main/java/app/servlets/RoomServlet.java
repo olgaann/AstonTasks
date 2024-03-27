@@ -6,6 +6,7 @@ import app.repositories.ClientRepository;
 import app.repositories.RoomRepository;
 import app.services.ClientService;
 import app.services.RoomService;
+import org.hibernate.SessionFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +24,8 @@ public class RoomServlet extends HttpServlet {
     @Override
     public void init() {
         DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
-        RoomRepository roomRepository = new RoomRepository(dataBase);
+        SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
+        RoomRepository roomRepository = new RoomRepository(dataBase, sessionFactory);
         roomService = new RoomService(roomRepository);
     }
 

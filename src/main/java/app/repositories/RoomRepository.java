@@ -1,7 +1,12 @@
 package app.repositories;
 
 import app.db.DataBase;
+import app.entities.Client;
 import app.entities.Room;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,54 +18,60 @@ import java.util.Optional;
 
 public class RoomRepository {
     private DataBase dataBase;
+    private SessionFactory sessionFactory;
 
-    public RoomRepository(DataBase dataBase) {
+    public RoomRepository(DataBase dataBase, SessionFactory sessionFactory) {
         this.dataBase = dataBase;
+        this.sessionFactory = sessionFactory;
     }
 
     public List<Room> findAll() {
-        List<Room> roomList = new ArrayList<>();
-
+        Session session = null;
+        Transaction transaction = null;
         try {
-            dataBase.connect();
-            Statement statement = dataBase.getStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM rooms");
+            session = sessionFactory.openSession();
+            List<Room> roomList;
 
-            while (resultSet.next()) {
-                Room room = new Room(resultSet.getLong("id"), resultSet.getInt("number"));
-                roomList.add(room);
-            }
-        } catch (SQLException e) {
+            transaction = session.beginTransaction();
+            String hql = "FROM Room";
+            Query<Room> query = session.createQuery(hql, Room.class);
+            roomList = query.list();
+
+            transaction.commit();
+            return roomList;
+        } catch (Exception e) {
             e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return new ArrayList<>();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-
-        return roomList;
     }
 
     public Optional<Room> add(int number) {
+        Session session = null;
+        Transaction transaction = null;
+
         try {
-            dataBase.connect();
-            String sql = "INSERT INTO rooms(number) VALUES (?) RETURNING id, number";
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
 
-            PreparedStatement statement = dataBase.getPreparedStatement(sql);
-            statement.setInt(1, number);
-            ResultSet resultSet = statement.executeQuery();
+            Room newRoom = new Room();
+            newRoom.setNumber(number);
+            session.save(newRoom);
+            transaction.commit();
 
-            if (resultSet.next()) {
-                Room newRoom = new Room();
-                newRoom.setId(resultSet.getLong("id"));
-                newRoom.setNumber(resultSet.getInt("number"));
-                return Optional.of(newRoom);
+            return Optional.of(newRoom);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return Optional.empty();
         } finally {
-            dataBase.disconnect();
+            session.close();
         }
-
-        return Optional.empty();
     }
 }
