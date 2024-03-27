@@ -1,12 +1,16 @@
 package app.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "clients")
+@Data
+@NoArgsConstructor
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,54 +28,6 @@ public class Client {
             inverseJoinColumns = @JoinColumn(name = "room_id")
     )
     private List<Room> rooms;
-
-    public Client(String name, String phone) {
-        this.name = name;
-        this.phone = phone;
-    }
-
-    public Client() {
-    }
-
-
-    public Client(long id, String name, String phone) {
-        this.id = id;
-        this.name = name;
-        this.phone = phone;
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
 
     @Override
     public String toString() {
