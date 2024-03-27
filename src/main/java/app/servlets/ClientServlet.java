@@ -28,7 +28,7 @@ public class ClientServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        //Валидные GET-запросы : /client   TODO/client/?id=n  (+ выводит список номеров, забронированных клиентом)
+        //Валидные GET-запросы : /client   /client/?id=n  (+ выводит список номеров, забронированных клиентом)
         // /client/?name=clientName
 
         String requestURI = request.getRequestURI();
@@ -40,7 +40,6 @@ public class ClientServlet extends HttpServlet {
     }
 
     public String parseRequestURIAndQueryString(String requestURI, String queryString) {
-        System.out.println(requestURI);
         if (requestURI.equals("/client") || requestURI.equals("/client/")) {
             if(queryString == null) {
                 return clientService.getAllClients().toString();
@@ -59,7 +58,7 @@ public class ClientServlet extends HttpServlet {
                 if (client.isEmpty()) return "No clients with that id";
                 return client.get().toString() + "\n" + client.get().getRooms().toString();
             }
-            if(queryString.matches("^name=[a-zA-Z]+$")) {
+            if(queryString.matches("^name=[a-zA-Z1-9]+$")) {
                 String name = queryString.substring(queryString.indexOf("=") + 1);
                 List<Client> clients = clientService.getByName(name);
                 if(clients.isEmpty()) return "No clients with that id";

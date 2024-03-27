@@ -6,6 +6,7 @@ import app.repositories.BookingRepository;
 import app.repositories.ClientRepository;
 import app.services.BookingService;
 import app.services.ClientService;
+import org.hibernate.SessionFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +24,8 @@ public class BookingServlet extends HttpServlet {
     @Override
     public void init() {
         DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
-
-        BookingRepository bookingRepository = new BookingRepository(dataBase);
+        SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
+        BookingRepository bookingRepository = new BookingRepository(dataBase, sessionFactory);
         bookingService = new BookingService(bookingRepository);
     }
 
@@ -32,10 +34,10 @@ public class BookingServlet extends HttpServlet {
         //Валидный GET-запрос: /booking показать все бронирования всех клиентов
         PrintWriter writer = response.getWriter();
         List<Booking> bookingList = bookingService.findAll();
+
         writer.write("Bookings list: \n" + bookingService.bookingListToPrintView(bookingList));
 
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,8 +59,8 @@ public class BookingServlet extends HttpServlet {
         }
         if (newBooking.isPresent()) {
             writer.write("Booking added \n");
-            List<Booking> bookingList = bookingService.findAll();
-            writer.write("Bookings list: \n" + bookingService.bookingListToPrintView(bookingList));
+
+            writer.write(newBooking.get().toString());
         } else {
             writer.write("Booking has not been added.");
         }
@@ -73,7 +75,7 @@ public class BookingServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         String clientIdString = request.getParameter("clientId");
         String numberString = request.getParameter("number");
-        List<Booking> deletedList;
+        List<Booking> deletedList = new ArrayList<>();
         try {
             long clientId = Long.parseLong(clientIdString);
             if (numberString == null) {

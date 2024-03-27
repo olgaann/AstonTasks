@@ -16,13 +16,17 @@ public class BookingService {
 
     public String bookingListToPrintView(List<Booking> bookingList) {
         return bookingList.stream()
-                .map(booking -> String.format("%s %s %s", booking.getClientId(), booking.getClientName(), booking.getNumber()))
+                .map(booking -> String.format("%s %d", booking.getClient().getName(), booking.getRoom().getNumber()))
                 .collect(Collectors.joining("\n"));
 
     }
 
     public List<Booking> findAll() {
         return bookingRepository.findAll();
+    }
+
+    public Optional<Booking> add(long clientId, long roomId) {
+        return bookingRepository.add(clientId, roomId);
     }
 
     public List<Booking> deleteAllByClientId(long clientId) {
@@ -33,7 +37,5 @@ public class BookingService {
         return bookingRepository.deleteAllByClientIdAndNumber(clientId, number);
     }
 
-    public Optional<Booking> add(long clientId, long roomId) {
-        return bookingRepository.add(clientId, roomId);
-    }
+
 }

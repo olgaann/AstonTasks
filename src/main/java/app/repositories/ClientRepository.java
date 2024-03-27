@@ -103,30 +103,6 @@ public class ClientRepository {
             session.close();
         }
     }
-//
-//    public List<Integer> getRoomsNumbersByClientId(long id) {
-//        List<Integer> numbers = new ArrayList<>();
-//        try {
-//            dataBase.connect();
-//            PreparedStatement preparedStatement = dataBase.getPreparedStatement(
-//                    "SELECT rooms.number FROM rooms JOIN bookings ON rooms.id = bookings.room_id WHERE bookings.client_id = ?;"
-//            );
-//            preparedStatement.setLong(1, id);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//
-//            while (resultSet.next()) {
-//                int number = resultSet.getInt("number");
-//                numbers.add(number);
-//
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            dataBase.disconnect();
-//        }
-//        System.out.println(numbers);
-//        return numbers;
-//    }
 
     public Optional<Client> add(String name, String phone) {
         Session session = null;

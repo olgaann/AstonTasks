@@ -1,49 +1,52 @@
 package app.entities;
 
-public class Booking {
-    private long clientId;
-    private String clientName;
-    private int number;
+import jakarta.persistence.*;
 
-    public Booking(long clientId, String clientName, int number) {
-        this.clientId = clientId;
-        this.clientName = clientName;
-        this.number = number;
-    }
+@Entity
+@Table(name = "bookings")
+public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private Client client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     public Booking() {
     }
 
-    public long getClientId() {
-        return clientId;
+    public long getId() {
+        return id;
     }
 
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getClientName() {
-        return clientName;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public int getNumber() {
-        return number;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     @Override
     public String toString() {
-        return "Booking{" +
-                "clientId=" + clientId +
-                ", clientName='" + clientName + '\'' +
-                ", number=" + number +
-                '}';
+        return  client.getName() + " " + room.getNumber() + "\n";
     }
 }
