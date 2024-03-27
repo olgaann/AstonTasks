@@ -1,10 +1,7 @@
 package app.servlets;
 
-import app.db.DataBase;
 import app.entities.Room;
-import app.repositories.ClientRepository;
 import app.repositories.RoomRepository;
-import app.services.ClientService;
 import app.services.RoomService;
 import org.hibernate.SessionFactory;
 
@@ -23,9 +20,8 @@ public class RoomServlet extends HttpServlet {
 
     @Override
     public void init() {
-        DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
         SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
-        RoomRepository roomRepository = new RoomRepository(dataBase, sessionFactory);
+        RoomRepository roomRepository = new RoomRepository(sessionFactory);
         roomService = new RoomService(roomRepository);
     }
 

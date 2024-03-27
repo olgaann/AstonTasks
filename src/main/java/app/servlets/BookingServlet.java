@@ -1,11 +1,8 @@
 package app.servlets;
 
-import app.db.DataBase;
 import app.entities.Booking;
 import app.repositories.BookingRepository;
-import app.repositories.ClientRepository;
 import app.services.BookingService;
-import app.services.ClientService;
 import org.hibernate.SessionFactory;
 
 import javax.servlet.ServletException;
@@ -23,9 +20,8 @@ public class BookingServlet extends HttpServlet {
 
     @Override
     public void init() {
-        DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
         SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
-        BookingRepository bookingRepository = new BookingRepository(dataBase, sessionFactory);
+        BookingRepository bookingRepository = new BookingRepository(sessionFactory);
         bookingService = new BookingService(bookingRepository);
     }
 

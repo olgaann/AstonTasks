@@ -1,6 +1,5 @@
 package app.servlets;
 
-import app.db.DataBase;
 import app.entities.Client;
 import app.repositories.ClientRepository;
 import app.services.ClientService;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +19,8 @@ public class ClientServlet extends HttpServlet {
 
     @Override
     public void init() {
-        DataBase dataBase = (DataBase) getServletContext().getAttribute("dataBase");
         SessionFactory sessionFactory = (SessionFactory) getServletContext().getAttribute("sessionFactory");
-        ClientRepository clientRepository = new ClientRepository(dataBase, sessionFactory);
+        ClientRepository clientRepository = new ClientRepository(sessionFactory);
         clientService = new ClientService(clientRepository);
     }
 

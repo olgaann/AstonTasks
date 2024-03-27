@@ -1,27 +1,19 @@
 package app.repositories;
 
-import app.db.DataBase;
-import app.entities.Client;
 import app.entities.Room;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class RoomRepository {
-    private DataBase dataBase;
     private SessionFactory sessionFactory;
 
-    public RoomRepository(DataBase dataBase, SessionFactory sessionFactory) {
-        this.dataBase = dataBase;
+    public RoomRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 

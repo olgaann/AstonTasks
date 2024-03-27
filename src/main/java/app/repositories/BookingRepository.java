@@ -1,6 +1,5 @@
 package app.repositories;
 
-import app.db.DataBase;
 import app.entities.Booking;
 import app.entities.Client;
 import app.entities.Room;
@@ -14,11 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class BookingRepository {
-    private DataBase dataBase;
+
     private SessionFactory sessionFactory;
 
-    public BookingRepository(DataBase dataBase, SessionFactory sessionFactory) {
-        this.dataBase = dataBase;
+    public BookingRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
