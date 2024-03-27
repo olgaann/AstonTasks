@@ -21,7 +21,7 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
-    
+
     @Override
     public String toString() {
         return  client.getName() + " " + room.getNumber() + "\n";

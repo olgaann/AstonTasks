@@ -1,6 +1,8 @@
 package app.repositories;
 
 import app.entities.Room;
+import app.entities.SingleRoom;
+import app.entities.SuiteRoom;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -50,7 +52,8 @@ public class RoomRepository {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            Room newRoom = new Room();
+            Room newRoom = new SuiteRoom(number, "KING");
+            //Room newRoom = new SingleRoom(number, 15);
             newRoom.setNumber(number);
             session.save(newRoom);
             transaction.commit();

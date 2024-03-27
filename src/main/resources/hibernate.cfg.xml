@@ -20,6 +20,8 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="app.entities.Client" />
         <mapping class="app.entities.Room" />
+        <mapping class="app.entities.SingleRoom" />
+        <mapping class="app.entities.SuiteRoom" />
         <mapping class="app.entities.Booking" />
 
 <!--        <property name="hibernate.hbm2ddl.auto"><![CDATA[none]]></property>-->
