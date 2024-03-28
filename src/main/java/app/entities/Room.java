@@ -21,15 +21,21 @@ public abstract class Room {
     @Column(name = "number")
     private int number;
 
-    public Room(int number) {
+    public Room(int number, int floor) {
         this.number = number;
+        this.floor = floor;
     }
 
-    @Override
-    public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", number=" + number +
-                '}';
+    @Column(name = "floor") // Новое поле "этаж"
+    private int floor;
+
+    public Room(int number) {
+        this.number = number;
+        this.floor = extractFloorFromNumber(number);
     }
+
+    private int extractFloorFromNumber(int roomNumber) {
+        return Integer.parseInt(String.valueOf(String.valueOf(roomNumber).charAt(0)));
+    }
+
 }

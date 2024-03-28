@@ -52,8 +52,8 @@ public class RoomRepository {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            Room newRoom = new SuiteRoom(number, "KING");
-            //Room newRoom = new SingleRoom(number, 15);
+            //Room newRoom = new SuiteRoom(number, "KING");
+            Room newRoom = new SingleRoom(number, 15);
             newRoom.setNumber(number);
             session.save(newRoom);
             transaction.commit();

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "suite_rooms")
-//@SequenceGenerator(name = "room_seq", sequenceName = "id_sequence_id_seq", allocationSize = 1)
 @Data
 @NoArgsConstructor
 public class SuiteRoom extends Room {
@@ -24,6 +23,6 @@ public class SuiteRoom extends Room {
 
     @Override
     public String toString() {
-        return this.getNumber() + " " + bedSize;
+        return "№" + this.getNumber() + " этаж "+ this.getFloor() + " " + bedSize;
     }
 }
