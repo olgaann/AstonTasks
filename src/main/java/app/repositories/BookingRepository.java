@@ -46,7 +46,6 @@ public class BookingRepository {
         }
     }
 
-
     public List<Booking> deleteAllByClientId(long clientId) {
 
         Session session = null;
@@ -78,8 +77,6 @@ public class BookingRepository {
         } finally {
             session.close();
         }
-
-
     }
 
     public List<Booking> deleteAllByClientIdAndNumber(long clientId, int number) {
@@ -146,5 +143,4 @@ public class BookingRepository {
         }
         return Optional.empty();
     }
-
 }

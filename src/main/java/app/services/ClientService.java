@@ -25,10 +25,6 @@ public class ClientService {
         return clientRepository.getByName(name);
     }
 
-//    public List<Integer> getRoomsNumbersByClientId(long id) {
-//        return clientRepository.getRoomsNumbersByClientId(id);
-//    }
-
     public Optional<Client> add(String name, String phone) {
         return clientRepository.add(name, phone);
     }

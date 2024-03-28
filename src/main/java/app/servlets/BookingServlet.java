@@ -62,7 +62,6 @@ public class BookingServlet extends HttpServlet {
         }
     }
 
-
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //Валидные DELETE-запросы : /booking?clientId=n удаляет все бронирования клиента
@@ -90,6 +89,5 @@ public class BookingServlet extends HttpServlet {
             return;
         }
         writer.write("Deleted bookings: \n" + bookingService.bookingListToPrintView(deletedList));
-
     }
 }

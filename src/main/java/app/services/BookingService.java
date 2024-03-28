@@ -36,6 +36,4 @@ public class BookingService {
     public List<Booking> deleteAllByClientIdAndNumber(long clientId, int number) {
         return bookingRepository.deleteAllByClientIdAndNumber(clientId, number);
     }
-
-
 }

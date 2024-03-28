@@ -31,7 +31,6 @@ public class RoomServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         List<Room> roomList = roomService.findAll();
         writer.write("Rooms list: \n" + roomService.roomListToPrintView(roomList));
-
     }
 
     @Override

@@ -24,6 +24,5 @@
         <mapping class="app.entities.SuiteRoom" />
         <mapping class="app.entities.Booking" />
 
-<!--        <property name="hibernate.hbm2ddl.auto"><![CDATA[none]]></property>-->
     </session-factory>
 </hibernate-configuration>

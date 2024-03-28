@@ -17,11 +17,9 @@ public class ContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-
         ServletContext servletContext = servletContextEvent.getServletContext();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         servletContext.setAttribute("sessionFactory", sessionFactory);
-
     }
 
 }

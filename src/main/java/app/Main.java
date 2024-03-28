@@ -11,9 +11,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        SessionFactory factory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .buildSessionFactory();
+        SessionFactory factory = HibernateUtil.getSessionFactory();
         Session session = null;
 
         try {

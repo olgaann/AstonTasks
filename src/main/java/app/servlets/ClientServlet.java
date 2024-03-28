@@ -38,7 +38,7 @@ public class ClientServlet extends HttpServlet {
 
     public String parseRequestURIAndQueryString(String requestURI, String queryString) {
         if (requestURI.equals("/client") || requestURI.equals("/client/")) {
-            if(queryString == null) {
+            if (queryString == null) {
                 return clientService.getAllClients().toString();
             }
             return parseQueryString(queryString);
@@ -47,18 +47,18 @@ public class ClientServlet extends HttpServlet {
         return "Your request is invalid";
     }
 
-    public String parseQueryString (String queryString) {
+    public String parseQueryString(String queryString) {
         try {
-            if(queryString.matches( "^id=\\d+$")) {
+            if (queryString.matches("^id=\\d+$")) {
                 long id = Long.parseLong(queryString.substring(queryString.indexOf("=") + 1));
                 Optional<Client> client = clientService.getById(id);
                 if (client.isEmpty()) return "No clients with that id";
                 return client.get().toString() + "\n" + client.get().getRooms().toString();
             }
-            if(queryString.matches("^name=[a-zA-Z1-9]+$")) {
+            if (queryString.matches("^name=[a-zA-Z1-9]+$")) {
                 String name = queryString.substring(queryString.indexOf("=") + 1);
                 List<Client> clients = clientService.getByName(name);
-                if(clients.isEmpty()) return "No clients with that id";
+                if (clients.isEmpty()) return "No clients with that id";
                 return clients.toString();
             }
             return "Your request is invalid";
@@ -68,7 +68,6 @@ public class ClientServlet extends HttpServlet {
         }
 
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -112,7 +111,7 @@ public class ClientServlet extends HttpServlet {
             return;
         }
 
-        if (updatedClient.isEmpty())  {
+        if (updatedClient.isEmpty()) {
             writer.write("Client has not updated(");
             return;
         }
